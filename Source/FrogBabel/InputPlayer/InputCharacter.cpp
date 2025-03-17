@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "InputCharacter.h"
+#include "Frogbabel/InputPlayer/InputCharacter.h"
 
 // Sets default values
 AInputCharacter::AInputCharacter()
