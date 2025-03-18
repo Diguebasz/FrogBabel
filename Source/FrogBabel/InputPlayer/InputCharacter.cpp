@@ -52,7 +52,7 @@ void AInputCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	if (UEnhancedInputComponent* Input = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		// We call the input Test Action, and if it is triggered we call the function TestInput
-		Input->BindAction(TestAction, ETriggerEvent::Triggered, this, &AInputCharacter::TestInput);
+		Input->BindAction(TestAction, ETriggerEvent::Completed, this, &AInputCharacter::TestInput);
 	}
 }
 
