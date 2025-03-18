@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "InputActionValue.h"
 #include "InputCharacter.generated.h"
 
 UCLASS()
@@ -25,5 +26,17 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+protected:
+
+	// We create a reference to InputMapping
+	UPROPERTY(EditAnywhere, Category= "EnhancedInput")
+	class UInputMappingContext* InputMapping;
+
+	// We create a reference to TestAction
+	UPROPERTY(EditAnywhere, Category = "EnhancedInput")
+	class UInputAction* TestAction;
+
+	void TestInput();
 
 };

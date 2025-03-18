@@ -2,6 +2,9 @@
 
 
 #include "Frogbabel/InputPlayer/InputCharacter.h"
+#include "InputMappingContext.h"
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
 
 // Sets default values
 AInputCharacter::AInputCharacter()
@@ -30,5 +33,31 @@ void AInputCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	// Add input mapping context
+	// We check if the Player Controller is valid
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+		// Get local player subsystem
+		// We check if the Enhanced Input Player Subsystem is valid
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			// Add input context
+			// if it is valid, we add the Input Mapping Context
+			Subsystem->AddMappingContext(InputMapping, 0);
+
+		}
+	}
+
+	// We check the Enhanced Input Component
+	if (UEnhancedInputComponent* Input = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		// We call the input Test Action, and if it is triggered we call the function TestInput
+		Input->BindAction(TestAction, ETriggerEvent::Triggered, this, &AInputCharacter::TestInput);
+	}
+}
+
+void AInputCharacter::TestInput()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Orange, "PRESSED INPUT ACTION");
 }
 
