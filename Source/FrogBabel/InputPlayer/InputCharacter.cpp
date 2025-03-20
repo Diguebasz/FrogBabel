@@ -2,9 +2,12 @@
 
 
 #include "Frogbabel/InputPlayer/InputCharacter.h"
+
+#include "DiffResults.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values
 AInputCharacter::AInputCharacter()
@@ -12,6 +15,9 @@ AInputCharacter::AInputCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
+	Camera->SetupAttachment(RootComponent);
+	Camera->bUsePawnControlRotation = true;
 }
 
 // Called when the game starts or when spawned
@@ -51,13 +57,49 @@ void AInputCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	// We check the Enhanced Input Component
 	if (UEnhancedInputComponent* Input = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		// We call the input Test Action, and if it is triggered we call the function TestInput
-		Input->BindAction(TestAction, ETriggerEvent::Completed, this, &AInputCharacter::TestInput);
+		// We call the input different Actions, and if they are triggered we call the associated functions
+		Input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AInputCharacter::Move);
+
+		Input->BindAction(LookAction, ETriggerEvent::Triggered, this, &AInputCharacter::Look);
+
+		Input->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AInputCharacter::Jump);
 	}
 }
 
-void AInputCharacter::TestInput()
+void AInputCharacter::Move(const FInputActionValue& InputValue)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Orange, "PRESSED INPUT ACTION");
+	FVector2D InputVector = InputValue.Get<FVector2D>();
+
+	if (IsValid(Controller))
+	{
+		// Get forward direction
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+		// Add movement input
+		AddMovementInput(ForwardDirection, InputVector.Y);
+		AddMovementInput(RightDirection, InputVector.X);
+	}
 }
+
+void AInputCharacter::Look(const FInputActionValue& InputValue)
+{
+	FVector2D InputVector = InputValue.Get<FVector2D>();
+
+	if (IsValid(Controller))
+	{
+		AddControllerYawInput(InputVector.X);
+		AddControllerPitchInput(InputVector.Y);
+	}
+}
+
+void AInputCharacter::Jump()
+{
+	ACharacter::Jump();
+}
+
+
 
