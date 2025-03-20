@@ -7,6 +7,9 @@
 #include "InputActionValue.h"
 #include "InputCharacter.generated.h"
 
+class USpringArmComponent;
+class UCameraComponent;
+
 UCLASS()
 class FROGBABEL_API AInputCharacter : public ACharacter
 {
