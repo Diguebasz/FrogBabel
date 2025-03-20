@@ -17,12 +17,12 @@ AInputCharacter::AInputCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
-	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->bUsePawnControlRotation = true;
+	CameraBoom = CreateDefaultSubobject<USpringArmComponent>("CameraBoom");
+	CameraBoom->SetupAttachment(RootComponent);
+	CameraBoom->bUsePawnControlRotation = true;
 
-	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
-	Camera->SetupAttachment(SpringArm);
+	Camera = CreateDefaultSubobject<UCameraComponent>("FollowCamera");
+	Camera->SetupAttachment(CameraBoom);
 
 	// "Make sure to add this code and include the CharacterMovementComponent.h for 3rd person"
 	// Must be deprecated. Causes character to lack rotation

@@ -12,12 +12,12 @@ class FROGBABEL_API AInputCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-	// We create our camera
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+	// Create Follow camera
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* Camera;
 
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* SpringArm;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	class USpringArmComponent* CameraBoom;
 
 protected:
 
