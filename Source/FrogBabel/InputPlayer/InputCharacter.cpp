@@ -24,10 +24,10 @@ AInputCharacter::AInputCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>("FollowCamera");
 	Camera->SetupAttachment(CameraBoom);
 
-	// "Make sure to add this code and include the CharacterMovementComponent.h for 3rd person"
+	// Make sure to add this code and include the CharacterMovementComponent.h for 3rd person
 	// Must be deprecated. Causes character to lack rotation
-	// bUseControllerRotationYaw = false;
-	// GetCharacterMovement()->bOrientRotationToMovement = false;
+	//bUseControllerRotationYaw = false;
+	//GetCharacterMovement()->bOrientRotationToMovement = false;
 }
 
 // Called when the game starts or when spawned
