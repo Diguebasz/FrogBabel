@@ -3,3 +3,18 @@
 
 #include "PickupHud.h"
 
+#include "FrogBabel/HUD/PickupWidget.h"
+
+void APickupHud::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (CoinPickupWidgetClass)
+	{
+		CoinPickupWidget = CreateWidget<UPickupWidget>(GetWorld(), CoinPickupWidgetClass);
+		if (CoinPickupWidget)
+		{
+			CoinPickupWidget->AddToViewport();
+		}
+	}
+}
