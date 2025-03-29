@@ -16,7 +16,7 @@ class FROGBABEL_API APickupHud : public AHUD
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "YouTube Demo")
+	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UPickupWidget> CoinPickupWidgetClass;
 
 	UPROPERTY()

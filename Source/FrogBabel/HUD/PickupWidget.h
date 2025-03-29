@@ -17,10 +17,10 @@ class FROGBABEL_API UPickupWidget : public UUserWidget
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(BlueprintReadOnly, Category = "YouTube Demo", meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UTextBlock> PickupCountText;
 
-	UPROPERTY(EditDefaultsOnly, Category = "YouTube Demo")
+	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<APickupActor> CoinActorClass;
 
 	int CoinCount;

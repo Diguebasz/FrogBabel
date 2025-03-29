@@ -20,7 +20,7 @@ class FROGBABEL_API APickupActor : public AActor
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(BLueprintAssignable, Category = "YouTube Demo")
+	UPROPERTY(BLueprintAssignable)
 	FOnCoinPickupDelgate OnCoinPickup;
 
 	APickupActor();
@@ -36,33 +36,32 @@ protected:
 	// UPROPERTY() Is used to expose values to the Blueprint System
 	// EditDefaultsOnly prevents blueprints from changes values at runtime
 	// TObjectPtr<ClassName> is the suggested way of writing ClassName* as of Unreal Engine 5
-	UPROPERTY(EditDefaultsOnly, Category = "YouTube Demo")
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UStaticMeshComponent> MeshComponent;
 
 	// Side of the Collider, the bigger this is the further away from
 	// the Coin mesh the player can pick it up
-	UPROPERTY(EditDefaultsOnly, Category = "YouTube Demo")
+	UPROPERTY(EditDefaultsOnly)
 	float ColliderRadius{ 32.f };
 
 	// Set the speed of rotation in any direction you want
-	UPROPERTY(EditDefaultsOnly, Category = "YouTube Demo")
+	UPROPERTY(EditDefaultsOnly)
 	FRotator RotationSpeed{ 0.f, 100.f, 0.f };
 
-	// Sound file that was uploaded to play when you pickup the Coin
-	// Coin Pickup Sound https://freesound.org/people/ProjectsU012/sounds/341695/
-	UPROPERTY(EditDefaultsOnly, Category = "YouTube Demo")
+	// Sound file that was uploaded to play when you pickup the object
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<USoundBase> SoundFile;
 
 	// Change the volume of the Sound Played, default is 50%
-	UPROPERTY(EditDefaultsOnly, Category = "YouTube Demo")
+	UPROPERTY(EditDefaultsOnly)
 	float VolumeMultiplier{ 0.5f };
 
-	// The Effect to play when the Coin is picked u
-	UPROPERTY(EditDefaultsOnly, Category = "YouTube Demo")
+	// The Effect to play when the object is picked up
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UNiagaraSystem> OnPickupEffect;
 
 	// The amount of (Unreal Units)/CM to offset the effect when played
-	UPROPERTY(EditDefaultsOnly, Category = "YouTube Demo")
+	UPROPERTY(EditDefaultsOnly)
 	float PickupEffectSpawnOffset{ 90.f };
 
 	// Even if you are not exposing a Pointer to blueprints we should always set UPROPERTY() so
