@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "MovingPlatform.generated.h"
 
-class USphereComponent;
+class UBoxComponent;
 
 UCLASS()
 class FROGBABEL_API AMovingPlatform : public AActor
@@ -22,7 +22,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY()
-	TObjectPtr<USphereComponent> ColliderComponent;
+	TObjectPtr<UBoxComponent> ColliderComponent;
 
 public:	
 	// Called every frame

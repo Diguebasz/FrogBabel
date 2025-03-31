@@ -6,7 +6,7 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/RotatingMovementComponent.h"
-#include "Kismet/GameplayStatics.h" //Might need to change this.
+#include "Kismet/GameplayStatics.h"
 
 #include "NiagaraFunctionLibrary.h" // Ignore the Niagara errors, apparently this is a bug in visual studio.
 
