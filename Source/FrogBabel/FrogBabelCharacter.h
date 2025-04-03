@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/CPP_StunnableInterface.h"
 #include "Logging/LogMacros.h"
 #include "FrogBabelCharacter.generated.h"
 
@@ -16,7 +17,7 @@ struct FInputActionValue;
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
-class AFrogBabelCharacter : public ACharacter
+class AFrogBabelCharacter : public ACharacter, public ICPP_StunnableInterface
 {
 	GENERATED_BODY()
 
