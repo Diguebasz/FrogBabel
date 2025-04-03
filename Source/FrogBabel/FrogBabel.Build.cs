@@ -9,6 +9,6 @@ public class FrogBabel : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "EnhancedInput" });
-        PrivateDependencyModuleNames.AddRange(new string[] { "Niagara" });
+        PrivateDependencyModuleNames.AddRange(new string[] { "Niagara", "AIModule", "AIModule" });
     }
 }
