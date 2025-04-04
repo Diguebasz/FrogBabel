@@ -45,10 +45,10 @@ void AFallingPlatform::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAct
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
 			{
 				// Disable collision (Set Collision Enabled node equivalent)
-				PlatformStaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				//PlatformStaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 				// Set visibility off (Set Visibility node equivalent)
-				PlatformStaticMesh->SetVisibility(false, true);
+				//PlatformStaticMesh->SetVisibility(false, true);
 
 				OnFall();
 			}, 0.8f, false); // 0.8 second delay, false means it won't repeat
