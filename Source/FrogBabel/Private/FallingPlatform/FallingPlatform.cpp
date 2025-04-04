@@ -32,6 +32,24 @@ void AFallingPlatform::BeginPlay()
 
 void AFallingPlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	bool IsPlayerCharacter = false;
+
+	// Checks for player / other Actor
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (PlayerController)
+	{
+		APawn* PlayerPawn = PlayerController->GetPawn();
+		if (PlayerPawn == OtherActor)
+		{
+			IsPlayerCharacter = true;
+		}
+	}
+
+	if (!IsPlayerCharacter)
+	{
+		return;
+	}
+
 	// Do Once functionality
 	if (bHasBeenTriggered) return;
 	bHasBeenTriggered = true;
