@@ -2,6 +2,8 @@
 
 
 #include "FallingPlatform/FallingPlatform.h"
+
+#include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/Character.h"
 
@@ -11,12 +13,11 @@ AFallingPlatform::AFallingPlatform()
 	PrimaryActorTick.bCanEverTick = false;
 
 	// Create and set up mesh component
-	PlatformMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlatformMesh"));
-	RootComponent = PlatformMesh;
+	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollider"));
+	RootComponent = BoxComponent;
 
 	// Initialize variables
 	bHasBeenTriggered = false;
-	PlatformStaticMesh = PlatformMesh;
 }
 
 // Called when the game starts or when spawned
@@ -25,11 +26,11 @@ void AFallingPlatform::BeginPlay()
 	Super::BeginPlay();
 
 	// Bind hit event
-	PlatformMesh->OnComponentHit.AddDynamic(this, &AFallingPlatform::OnHit);
+	//PlatformMesh->OnComponentHit.AddDynamic(this, &AFallingPlatform::OnHit);
+	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AFallingPlatform::OnBeginOverlap);
 }
 
-void AFallingPlatform::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	FVector NormalImpulse, const FHitResult& Hit)
+void AFallingPlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	// Do Once functionality
 	if (bHasBeenTriggered) return;
