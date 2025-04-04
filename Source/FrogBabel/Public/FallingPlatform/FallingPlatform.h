@@ -15,6 +15,12 @@ public:
 	// Sets default values for this actor's properties
 	AFallingPlatform();
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Triggers")
+	void OnFall();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Triggers")
+	void OnContact();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
