@@ -4,6 +4,7 @@
 #include "PickupHud.h"
 
 #include "FrogBabel/HUD/PickupWidget.h"
+//#include "FrogBabel/HUD/HeightBarWidget.h"
 
 void APickupHud::BeginPlay()
 {
