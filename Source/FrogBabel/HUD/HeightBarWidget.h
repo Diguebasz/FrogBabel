@@ -27,6 +27,12 @@ public:
     UPROPERTY(meta = (BindWidget))
     class UImage* WaterIcon;
 
+    UPROPERTY(meta = (BindWidget))
+    class UImage* WaterSprite;
+
+    UPROPERTY(meta = (BindWidget))
+    class UImage* PlayerSprite;
+
     // Set these values to match the Z range in your game.
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Progress")
     float MinZ = 0.0f;
