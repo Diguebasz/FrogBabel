@@ -2,6 +2,8 @@
 
 
 #include "FallingPlatform/FallingPlatform.h"
+
+#include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/Character.h"
 
@@ -11,12 +13,11 @@ AFallingPlatform::AFallingPlatform()
 	PrimaryActorTick.bCanEverTick = false;
 
 	// Create and set up mesh component
-	PlatformMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlatformMesh"));
-	RootComponent = PlatformMesh;
+	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollider"));
+	RootComponent = BoxComponent;
 
 	// Initialize variables
 	bHasBeenTriggered = false;
-	PlatformStaticMesh = PlatformMesh;
 }
 
 // Called when the game starts or when spawned
@@ -25,15 +26,35 @@ void AFallingPlatform::BeginPlay()
 	Super::BeginPlay();
 
 	// Bind hit event
-	PlatformMesh->OnComponentHit.AddDynamic(this, &AFallingPlatform::OnHit);
+	//PlatformMesh->OnComponentHit.AddDynamic(this, &AFallingPlatform::OnHit);
+	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AFallingPlatform::OnBeginOverlap);
 }
 
-void AFallingPlatform::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	FVector NormalImpulse, const FHitResult& Hit)
+void AFallingPlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	bool IsPlayerCharacter = false;
+
+	// Checks for player / other Actor
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (PlayerController)
+	{
+		APawn* PlayerPawn = PlayerController->GetPawn();
+		if (PlayerPawn == OtherActor)
+		{
+			IsPlayerCharacter = true;
+		}
+	}
+
+	if (!IsPlayerCharacter)
+	{
+		return;
+	}
+
 	// Do Once functionality
 	if (bHasBeenTriggered) return;
 	bHasBeenTriggered = true;
+
+	OnContact();
 
 	// Cast to Character (equivalent to Cast To Character node)
 	if (ACharacter* Character = Cast<ACharacter>(OtherActor))
@@ -43,10 +64,12 @@ void AFallingPlatform::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAct
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
 			{
 				// Disable collision (Set Collision Enabled node equivalent)
-				PlatformStaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				//PlatformStaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 				// Set visibility off (Set Visibility node equivalent)
-				PlatformStaticMesh->SetVisibility(false, true);
+				//PlatformStaticMesh->SetVisibility(false, true);
+
+				OnFall();
 			}, 0.8f, false); // 0.8 second delay, false means it won't repeat
 	}
 }
