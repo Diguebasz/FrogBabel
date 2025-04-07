@@ -81,4 +81,7 @@ public:
 	// Because this is not an Pointer we don't need the UPROPERTY() decorator
 	FVector Offset;
 	FVector Location;
+
+	UFUNCTION(BlueprintImplementableEvent, Category="Event")
+	void OnPickup();
 };

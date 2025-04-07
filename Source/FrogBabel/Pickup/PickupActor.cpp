@@ -83,32 +83,43 @@ void APickupActor::OnBeginOverlapComponentEvent(
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult
 )
 {
+	
+
 	// Using Cast to check if the OtherActor is a Character
 	// This should be changed if you have AI walking around
-	if (!Cast<ACharacter>(OtherActor)) return;
+	
+	if (Cast<APawn>(OtherActor)) {
 
-	// Check if SoundFile is set before attempting to use it
-	if (SoundFile)
-	{
-		// Play the provided sound file here
-		UGameplayStatics::PlaySoundAtLocation(
-			this, SoundFile, Location, VolumeMultiplier);
+		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+		
+		if (OtherActor == PlayerController->GetPawn()) {
+			OnPickup();
+			// Check if SoundFile is set before attempting to use it
+			if (SoundFile)
+			{
+				// Play the provided sound file here
+				UGameplayStatics::PlaySoundAtLocation(
+					this, SoundFile, Location, VolumeMultiplier);
+			}
+
+			// Check if PickupEffect is set before attempting to use it
+			if (OnPickupEffect)
+			{
+				// Play the PickupEffect at the Character Actors Location with the provided Offset
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+					GetWorld(), OnPickupEffect, OtherActor->GetActorLocation() + Offset
+				);
+			}
+
+			if (OnCoinPickup.IsBound())
+			{
+				OnCoinPickup.Broadcast();
+			}
+
+			// Destroy the Actor so it disappears from the world
+			Destroy();
+		}
+
 	}
-
-	// Check if PickupEffect is set before attempting to use it
-	if (OnPickupEffect)
-	{
-		// Play the PickupEffect at the Character Actors Location with the provided Offset
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-			GetWorld(), OnPickupEffect, OtherActor->GetActorLocation() + Offset
-		);
-	}
-
-	if (OnCoinPickup.IsBound())
-	{
-		OnCoinPickup.Broadcast();
-	}
-
-	// Destroy the Actor so it disappears from the world
-	Destroy();
+	
 }
