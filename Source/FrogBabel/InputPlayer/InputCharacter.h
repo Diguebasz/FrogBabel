@@ -59,6 +59,7 @@ protected:
 	void Jump();
 
 private:
+	UPROPERTY(EditAnywhere, Category= "Fool's Foolish Look")
 	class UAIPerceptionStimuliSourceComponent* SourceOfStimulus;
 
 	void BecomeSensable();

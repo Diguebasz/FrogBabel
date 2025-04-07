@@ -39,6 +39,7 @@ public:
 	UBlackboardComponent* BlackboardComponent;
 
 private:
+	UPROPERTY()
 	class UAISenseConfig_Sight* TheLyingEyes;
 
 	void SetupSightSystem();
