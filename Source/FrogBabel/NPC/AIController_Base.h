@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AIController.h"
 #include "Engine/TargetPoint.h"
+#include "Perception/AIPerceptionTypes.h"
 #include "NPC_Base.h"
 #include "AIController_Base.generated.h"
 
@@ -36,4 +37,12 @@ public:
 	UBehaviorTreeComponent* BehaviorTreeComponent;
 	UPROPERTY()
 	UBlackboardComponent* BlackboardComponent;
+
+private:
+	class UAISenseConfig_Sight* TheLyingEyes;
+
+	void SetupSightSystem();
+
+	UFUNCTION()
+	void OnTargetDetected(AActor* Actor, FAIStimulus const Stimulus);
 };

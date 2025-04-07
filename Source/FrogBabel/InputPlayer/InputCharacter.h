@@ -58,5 +58,9 @@ protected:
 	void Look(const FInputActionValue& InputValue);
 	void Jump();
 
+private:
+	class UAIPerceptionStimuliSourceComponent* SourceOfStimulus;
+
+	void BecomeSensable();
 
 };

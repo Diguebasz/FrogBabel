@@ -10,7 +10,10 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Sight.h"
 
+class UAISense_Sight;
 // Sets default values
 AInputCharacter::AInputCharacter()
 {
@@ -28,6 +31,8 @@ AInputCharacter::AInputCharacter()
 	// Must be deprecated. Causes character to lack rotation
 	//bUseControllerRotationYaw = false;
 	//GetCharacterMovement()->bOrientRotationToMovement = false;
+
+	BecomeSensable();
 }
 
 // Called when the game starts or when spawned
@@ -111,5 +116,13 @@ void AInputCharacter::Jump()
 	ACharacter::Jump();
 }
 
-
+void AInputCharacter::BecomeSensable()
+{
+	SourceOfStimulus = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("I CAN BE SEEN"));
+	if (SourceOfStimulus)
+	{
+		SourceOfStimulus->RegisterForSense(TSubclassOf<UAISense_Sight>());
+		SourceOfStimulus->RegisterWithPerceptionSystem();
+	}
+}
 

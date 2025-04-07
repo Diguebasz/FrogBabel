@@ -3,6 +3,8 @@
 
 #include "NPC_Base.h"
 
+
+
 // Sets default values
 ANPC_Base::ANPC_Base()
 {
@@ -10,7 +12,6 @@ ANPC_Base::ANPC_Base()
 	PrimaryActorTick.bCanEverTick = true;
 
     AIBrain = CreateDefaultSubobject<UAIPerceptionComponent>("Happy Brain");
-
 }
 
 // Called when the game starts or when spawned
@@ -33,12 +34,6 @@ void ANPC_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
-
-void ANPC_Base::SensePlayer()
-{
-}
-
-
 
 void ANPC_Base::GenerateNavigableNavPoints()
 {
@@ -79,5 +74,6 @@ void ANPC_Base::GenerateNavigableNavPoints()
         }
     }
 }
+
 
 
