@@ -46,6 +46,10 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     class UStaticMeshComponent* Mesh;
 
+    // Mesh component for visualization.
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    class USkeletalMeshComponent* SkeletalMesh;
+
     // Arrow component to control launch direction and intensity.
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
     class UArrowComponent* LaunchDirection;
