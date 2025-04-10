@@ -33,7 +33,6 @@ class FROGBABEL_API ABouncePad : public AActor
 public:
     ABouncePad();
 
-protected:
     virtual void BeginPlay() override;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -43,12 +42,12 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     class UBoxComponent* OverlapBox;
 
-    // Mesh component for visualization (optional).
+    // Mesh component for visualization.
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     class UStaticMeshComponent* Mesh;
 
     // Arrow component to control launch direction and intensity.
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
     class UArrowComponent* LaunchDirection;
 
     // Launch strength multiplier.
@@ -60,4 +59,7 @@ protected:
     void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
         bool bFromSweep, const FHitResult& SweepResult);
+
+    UFUNCTION(BlueprintImplementableEvent, Category="Events")
+    void OnBounce();
 };

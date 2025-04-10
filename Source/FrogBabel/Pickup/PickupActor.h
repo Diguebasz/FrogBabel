@@ -10,7 +10,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCoinPickupDelgate);
 
 // This prevents us from needing to import headers hear which makes recompiles faster in
 // larger projects since headers are not changing.
-class USphereComponent;
+class UCapsuleComponent;
 class URotatingMovementComponent;
 class UNiagaraSystem;
 
@@ -32,7 +32,10 @@ public:
 		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult
 	);
 
-protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	class USceneComponent* DefaultSceneRoot;
+
+//protected:
 	// UPROPERTY() Is used to expose values to the Blueprint System
 	// EditDefaultsOnly prevents blueprints from changes values at runtime
 	// TObjectPtr<ClassName> is the suggested way of writing ClassName* as of Unreal Engine 5
@@ -41,8 +44,11 @@ protected:
 
 	// Side of the Collider, the bigger this is the further away from
 	// the Coin mesh the player can pick it up
-	UPROPERTY(EditDefaultsOnly)
-	float ColliderRadius{ 32.f };
+	UPROPERTY(EditAnywhere)
+	float ColliderRadius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FRotator CapsuleRelativeRotation;
 
 	// Set the speed of rotation in any direction you want
 	UPROPERTY(EditDefaultsOnly)
@@ -66,8 +72,8 @@ protected:
 
 	// Even if you are not exposing a Pointer to blueprints we should always set UPROPERTY() so
 	// They are properly handled throughout the life of the property
-	UPROPERTY()
-	TObjectPtr<USphereComponent> ColliderComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UCapsuleComponent> ColliderComponent;
 
 	UPROPERTY()
 	TObjectPtr<URotatingMovementComponent> RotatingMovementComponent;
@@ -75,4 +81,7 @@ protected:
 	// Because this is not an Pointer we don't need the UPROPERTY() decorator
 	FVector Offset;
 	FVector Location;
+
+	UFUNCTION(BlueprintImplementableEvent, Category="Event")
+	void OnPickup();
 };

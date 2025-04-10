@@ -84,6 +84,8 @@ void ABouncePad::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
             UCharacterMovementComponent* MovementComponent = Character->GetCharacterMovement();
             MovementComponent->Velocity = FVector::ZeroVector;
             MovementComponent->SetMovementMode(MOVE_Walking);
+
+            OnBounce();
         }
     }
 }
