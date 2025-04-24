@@ -38,7 +38,7 @@ public:
     float MinZ = 0.0f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Progress")
-    float MaxZ = 10000.0f;
+    float MaxZ = 18830.0f;
 
     // References to the actors whose positions drive the icons.
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Progress")
