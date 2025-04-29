@@ -1,109 +1,138 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "FrogBabel/Platforms/RisingLogActor.h"
 #include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/TimelineComponent.h"
 #include "Engine/World.h"
+#include "Kismet/GameplayStatics.h"
 #include "TreeActor.h"
 
 ARisingLogActor::ARisingLogActor()
 {
-    PrimaryActorTick.bCanEverTick = true;                            // enable Tick :contentReference[oaicite:3]{index=3}
-    PlatformMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlatformMesh"));
-    RootComponent = PlatformMesh;
+    PrimaryActorTick.bCanEverTick = true;
+
+    // Create and set a mesh component as the root
+    MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
+    RootComponent = MeshComp;
+
+    // Optional: adjust collision, shadows, etc. here
 }
 
 void ARisingLogActor::BeginPlay()
 {
     Super::BeginPlay();
-    InitialLocation = GetActorLocation();
-    TargetLocation = InitialLocation + FVector(0.f, 0.f, RiseHeight);
-    bRising = true;
-    //CurrentState = ELogState::Rising;
+
+    OriginLocation = GetActorLocation();
+    ElapsedTime = 0.f;
+    CurrentState = ERiseSinkState::Rising;
+
+    TArray<AActor*> Found;
+    UGameplayStatics::GetAllActorsOfClass(
+        GetWorld(),
+        ATreeActor::StaticClass(),
+        Found);
+
+    if (Found.Num() > 0)
+    {
+        TreeActor = Cast<ATreeActor>(Found[0]);
+    }
+
+
+    if (!TreeActor)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("%s has no TargetActor!"), *GetName());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Log, TEXT("%s targeting %s"),
+            *GetName(), *TreeActor->GetName());
+    }
 }
 
 void ARisingLogActor::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    if (!bRising) return;
-
-    /*switch (CurrentState)
+    switch (CurrentState)
     {
-    case ELogState::Rising:
-    {*/
+    case ERiseSinkState::Rising:
+        HandleRising(DeltaTime);
+        break;
 
-    // Compute step and new location
-    float Step = RiseSpeed * DeltaTime;
-    FVector CurrentLoc = GetActorLocation();
-    FVector NewLoc = CurrentLoc + FVector(0.f, 0.f, Step);
+    case ERiseSinkState::Sinking:
+        HandleSinking(DeltaTime);
+        break;
 
-    // Clamp at target
-    if (NewLoc.Z >= TargetLocation.Z)
-    {
-        NewLoc.Z = TargetLocation.Z;
-        bRising = false;
+    case ERiseSinkState::Finished:
+        // Once finished, simply queue for destroy
+        Destroy();
+        break;
     }
-
-    // Clamp at target
-    if (NewLoc.Z >= TargetLocation.Z)
-    {
-        NewLoc.Z = TargetLocation.Z;
-        bRising = false;
-    }
-
-    // Instantly move actor
-    SetActorLocation(NewLoc);                                        // move actor :contentReference[oaicite:4]{index=4}
 }
 
-    // Instantly move actor
-    /*SetActorLocation(NewLoc);                                        // move actor :contentReference[oaicite:4]{index=4}
+void ARisingLogActor::HandleRising(float DeltaTime)
+{
+    ElapsedTime += DeltaTime;
+    const float Alpha = FMath::Clamp(ElapsedTime / (RiseDuration+(ElapsedTime/5)), 0.f, 1.f);
 
-    FVector Cur = GetActorLocation();
-    Cur.Z = FMath::Min(Cur.Z + RiseSpeed * DeltaTime, TopLocation.Z);
-    SetActorLocation(Cur);
-    if (Cur.Z >= TopLocation.Z)
+    // Interpolate Z from OriginLocation.Z to OriginLocation.Z + RiseHeight
+    FVector NewLoc = OriginLocation;
+    NewLoc.Z += Alpha * RiseHeight;
+    SetActorLocation(NewLoc);
+
+    if (Alpha >= 1.f)
     {
-        CurrentState = ELogState::Rotating;
+        // switch to sinking
+        CurrentState = ERiseSinkState::Sinking;
+        ElapsedTime = 0.f;
     }
-    break;
+}
+
+void ARisingLogActor::HandleSinking(float DeltaTime)
+{
+    // Advance time
+    ElapsedTime += DeltaTime;
+
+    // Raw progress 0→1 over SinkDuration
+    const float RawAlpha = FMath::Clamp(ElapsedTime / SinkDuration, 0.f, 1.f);
+    // Smooth it with an ease-in-out (exponent 2.0)
+    const float SmoothAlpha = FMath::InterpEaseInOut(0.f, 1.f, RawAlpha, 2.f);
+
+    // 1) Move down (but eased)
+    {
+        FVector NewLoc = OriginLocation;
+        NewLoc.Z += (1.f - SmoothAlpha) * RiseHeight;
+        SetActorLocation(NewLoc);
     }
 
-    case ELogState::Rotating:
+    // 2) Tilt to the side relative to TargetActor (eased)
+    if (TreeActor)
     {
-        if (RotationTarget)
+        // Flattened "away" vector
+        FVector Away = GetActorLocation() - TreeActor->GetActorLocation();
+        Away.Z = 0.f;
+        Away.Normalize();
+        if (!Away.IsNearlyZero())
         {
-            // 1) compute axis from log to target
-            FVector Axis = (RotationTarget->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+            // Side direction = Up × Away
+            FVector SideDir = FVector::CrossProduct(FVector::UpVector, Away).GetSafeNormal();
+            // Axis to rotate around = Up × SideDir
+            FVector RotAxis = FVector::CrossProduct(FVector::UpVector, SideDir).GetSafeNormal();
 
-            // 2) create a quaternion for this frame�s rotation
-            float AngleRad = FMath::DegreesToRadians(RotateSpeed * DeltaTime);       //:contentReference[oaicite:2]{ index = 2 }
-            FQuat DeltaQuat(Axis, AngleRad); //: contentReference[oaicite:3]{ index = 3 }
+            // Build quaternion from 0→90° based on eased alpha
+            const float AngleRad = FMath::DegreesToRadians(-60.f * SmoothAlpha);
+            FQuat FallQuat(RotAxis, AngleRad);
+            FQuat NewQuat = FQuat::Slerp(FQuat::Identity, FallQuat, SmoothAlpha);
 
-                // 3) apply it in world-space
-            AddActorWorldRotation(DeltaQuat); //: contentReference[oaicite:4]{ index = 4 }
-
-                // 4) track how much we�ve spun so far
-            AccumulatedRotation += RotateSpeed * DeltaTime;
-            if (AccumulatedRotation >= TotalRotateAngle)
-            {
-                CurrentState = ELogState::Sinking;
-            }
+            // Apply it to your mesh (or root, if appropriate)
+            MeshComp->SetRelativeRotation(NewQuat);
         }
-        break;
     }
 
-    case ELogState::Sinking:
+    // 3) Once raw α hits 1, we’re fully sunk/tilted—destroy immediately
+    if (RawAlpha >= 1.f)
     {
-        // move down and destroy when back at initial depth
-        FVector Cur = GetActorLocation();
-        Cur.Z = Cur.Z - SinkSpeed * DeltaTime;
-        SetActorLocation(Cur);
-        if (Cur.Z <= InitialLocation.Z)
-        {
-            Destroy();                                                             //:contentReference[oaicite:5]{ index = 5 }
-        }
-        break;
+        Destroy();
     }
-    }*/
-//}
+}
