@@ -3,15 +3,16 @@
 
 #include "AIController_Base.h"
 
-#include "NPC_Base.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Frogbabel/InputPlayer/InputCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 
 AAIController_Base::AAIController_Base()
 {
+    SetupSightSystem();
 	BlackboardComponent = CreateDefaultSubobject<UBlackboardComponent>("BlackBoard Component");
 	BehaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>("Behavior Tree Component");
 }
@@ -20,7 +21,7 @@ void AAIController_Base::OnPossess(APawn* InPawn)
 {
     Super::OnPossess(InPawn);
 
-    //if (!BlackboardComponent && !BehaviorTreeComponent) return;
+    if (!BlackboardComponent && !BehaviorTreeComponent) return;
 
     UseBlackboard(BlackboardDataPtr, BlackboardComponent);
     RunBehaviorTree(BehaviourTreePtr);
@@ -51,7 +52,7 @@ void AAIController_Base::SetupSightSystem()
 
 void AAIController_Base::OnTargetDetected(AActor* Actor, FAIStimulus const Stimulus)
 {
-    if (ANPC_Base* const ch = Cast<ANPC_Base>(Actor))
+    if (AInputCharacter* const ch = Cast<AInputCharacter>(Actor))
     {
         GetBlackboardComponent()->SetValueAsBool("ISeeYou", Stimulus.WasSuccessfullySensed());
     }
