@@ -84,8 +84,14 @@ void ARisingLogActor::HandleRising(float DeltaTime)
     if (Alpha >= 1.f)
     {
         // switch to sinking
-        CurrentState = ERiseSinkState::Sinking;
-        ElapsedTime = 0.f;
+        LingerTime += DeltaTime;
+        if (LingerTime >= 0.5f) {
+            CurrentState = ERiseSinkState::Sinking;
+            ElapsedTime = 0.f;
+        }
+
+        //CurrentState = ERiseSinkState::Sinking;
+        //ElapsedTime = 0.f;
     }
 }
 
@@ -121,7 +127,7 @@ void ARisingLogActor::HandleSinking(float DeltaTime)
             FVector RotAxis = FVector::CrossProduct(FVector::UpVector, SideDir).GetSafeNormal();
 
             // Build quaternion from 0→90° based on eased alpha
-            const float AngleRad = FMath::DegreesToRadians(-60.f * SmoothAlpha);
+            const float AngleRad = FMath::DegreesToRadians(-90.f * SmoothAlpha);
             FQuat FallQuat(RotAxis, AngleRad);
             FQuat NewQuat = FQuat::Slerp(FQuat::Identity, FallQuat, SmoothAlpha);
 

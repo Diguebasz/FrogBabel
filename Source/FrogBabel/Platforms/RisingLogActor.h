@@ -40,11 +40,11 @@ public:
 
     /** How far up (in Unreal units) to rise */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rise/Sink")
-    float RiseHeight = 8000.f;
+    float RiseHeight = 6000.f;
 
     /** How long (seconds) the rising phase lasts */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rise/Sink")
-    float RiseDuration = 4.f;
+    float RiseDuration = 2.f;
 
     /** How long (seconds) the sinking phase lasts */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rise/Sink")
@@ -60,6 +60,8 @@ private:
 
     /** Tracks time within current phase */
     float ElapsedTime = 0.f;
+
+    float LingerTime = 0.f;
 
     /** Current state */
     ERiseSinkState CurrentState = ERiseSinkState::Rising;
