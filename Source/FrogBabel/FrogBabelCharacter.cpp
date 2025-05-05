@@ -85,6 +85,9 @@ void AFrogBabelCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AFrogBabelCharacter::Look);
+
+		// Exit Game
+		//EnhancedInputComponent->BindAction(ExitAction, ETriggerEvent::Triggered, this, &AFrogBabelCharacter::ExitGame);
 	}
 	else
 	{
@@ -92,6 +95,11 @@ void AFrogBabelCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	}
 }
 
+/*void AFrogBabelCharacter::ExitGame()
+{
+	ExitGame();
+}
+*/
 void AFrogBabelCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
