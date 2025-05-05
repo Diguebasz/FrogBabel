@@ -60,15 +60,15 @@ void UHeightBarWidget::UpdateIcons()
 
     // Calculate the new Y positions.
     // (Assuming that 0 corresponds to the bottom of the bar and 1 corresponds to the top.)
-    float PlayerY = (1.0f - PlayerPercent) * BarSize.Y;
-    float WaterY = (1.0f - WaterPercent) * BarSize.Y;
+    float PlayerY = (1.0f - PlayerPercent) * BarSize.Y /** 1.104*/; // The strange multiplication at the end is to account for the offset of the tree from the top of the screen.
+    float WaterY = (1.0f - WaterPercent) * BarSize.Y /** 1.104*/; // Same as above.
 
     // Update the PlayerIcon position.
     if (UCanvasPanelSlot* PlayerSlot = Cast<UCanvasPanelSlot>(PlayerIcon->Slot))
     {
         FVector2D CurrentPos = PlayerSlot->GetPosition();
         // Keep the current X position and update Y.
-        PlayerSlot->SetPosition(FVector2D(CurrentPos.X, PlayerY));
+        PlayerSlot->SetPosition(FVector2D(CurrentPos.X, PlayerY - 45));
     }
 
     // Attaching the PlayerSprite to the player position.
@@ -76,7 +76,7 @@ void UHeightBarWidget::UpdateIcons()
     {
         FVector2D CurrentPos = PlayerSlot->GetPosition();
         // Keep the current X position and update Y.
-        PlayerSlot->SetPosition(FVector2D(CurrentPos.X, PlayerY - 75));
+        PlayerSlot->SetPosition(FVector2D(CurrentPos.X, PlayerY - 50)); // How offset the player sprite should be on the Y axis.
     }
 
     // Ataching the WaterSprite to the water position.
@@ -84,7 +84,7 @@ void UHeightBarWidget::UpdateIcons()
     {
         FVector2D CurrentPos = WaterSlot->GetPosition();
         // Keep the current X position and update Y.
-        WaterSlot->SetPosition(FVector2D(CurrentPos.X, WaterY - 5));
+        WaterSlot->SetPosition(FVector2D(CurrentPos.X, WaterY - 15)); // How offset the water sprite should be on the Y axis. Used to be -5
     }
     
     float ScaleMultiplier = 1.0f; // Incase the water bar should rise faster or slower.

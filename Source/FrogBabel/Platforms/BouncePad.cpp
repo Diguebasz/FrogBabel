@@ -28,6 +28,7 @@ void ABouncePad::Tick(float DeltaTime)
 #include "BouncePad.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Components/ArrowComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -48,6 +49,10 @@ ABouncePad::ABouncePad()
     // The mesh to represent the jump pad.
     Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
     Mesh->SetupAttachment(RootComponent);
+    
+    // The mesh to represent the jump pad.
+    SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
+    SkeletalMesh->SetupAttachment(RootComponent);
 
     // Tthe arrow component.
     LaunchDirection = CreateDefaultSubobject<UArrowComponent>(TEXT("LaunchDirection"));
@@ -76,14 +81,40 @@ void ABouncePad::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
         ACharacter* Character = Cast<ACharacter>(OtherActor);
         if (Character)
         {
-            // Use the forward vector of the LaunchDirection arrow to determine the launch direction,
-            // then multiply by LaunchStrength for intensity.
-            FVector LaunchVelocity = LaunchDirection->GetForwardVector() * LaunchStrength;
-            Character->LaunchCharacter(LaunchVelocity, true, true);
+            // Obtain the player's current world location.
+            FVector PlayerWorldLocation = Character->GetActorLocation();
+
+            // Convert the player's location from world space to BouncePad local space.
+            FTransform BouncePadTransform = GetActorTransform();
+            FVector LocalPlayerLocation = BouncePadTransform.InverseTransformPosition(PlayerWorldLocation);
+
+            // Adjust the local location:
+            // For example, center the player along the local Y axis while preserving the X offset.
+            LocalPlayerLocation.X = 0.f;
+
+            // Convert the adjusted local position back to world space.
+            FVector AdjustedWorldLocation = BouncePadTransform.TransformPosition(LocalPlayerLocation);
+
+            // Teleport the player.
+            // Note: TeleportTo is often preferable to SetActorLocation when the actor has movement components.
+            bool bTeleported = Character->TeleportTo(AdjustedWorldLocation, Character->GetActorRotation());
+
+            // Get the center location of this BouncePad actor. Bruh, how tf can I snap the player to the relative center of the object??
+            //FVector BouncePadCenter = GetActorLocation() + FVector(0.f, 0.f, 50.f) /* Character->GetActorForwardVector()*/ /* + Character->GetActorLocation()*/;
+
+            //FVector PlayerRelativeLocation = BouncePadCenter * GetComponentTransform().InverseTransformLocation(Character->GetComponentLocation());
+
+            //FVector PlayerRelativeLocation = Character->GetActorLocation() - BouncePadCenter;
+
+            // SetActorLocation (simple repositioning)
+            //Character->SetActorLocation(BouncePadCenter, false, nullptr, ETeleportType::TeleportPhysics);
 
             UCharacterMovementComponent* MovementComponent = Character->GetCharacterMovement();
             MovementComponent->Velocity = FVector::ZeroVector;
             MovementComponent->SetMovementMode(MOVE_Walking);
+
+            FVector LaunchVelocity = LaunchDirection->GetForwardVector() * LaunchStrength;
+            Character->LaunchCharacter(LaunchVelocity, true, true);
 
             OnBounce();
         }
